@@ -22,7 +22,7 @@
     //import {ARButton} from './node_modules/three/examples/jsm/webxr/ARButton'
     //import {GLTFLoader} from './node_modules/three/examples/jsm/loaders/GLTFLoader.js'
 
-    let scene, camera, renderer, objMesh, sceneObject;
+    let scene, camera, renderer, objMesh, sceneObject,hollowObject;
     let loader;
     let model;
     let controller;
@@ -84,18 +84,27 @@
 
 
       //Adding objects to the scene
-      const geometry = new THREE.SphereGeometry(10.99, 32, 16);
-     // const geometry = new THREE.BoxGeometry(1,1,1);
+      const geometry = new THREE.SphereGeometry(1.99, 32, 16);
+     const hollowGeometry = new THREE.CylinderGeometry(3,1,10,32,32,1,true);
       //const geometry = new THREE.PlaneGeometry(.1,.1);
       const material = new THREE.MeshBasicMaterial(
         {
-          color: new THREE.Color("rgb(0,0,0)")
+          color: new THREE.Color("rgb(255,0,0)")
         }
       );
+      const hollowMaterial = new THREE.MeshBasicMaterial(
+        {
+          color: new THREE.Color("rgb(255,255,255)")
+        }
+      )
 
-      sceneObject = new THREE.Mesh(geometry, material)
-      sceneObject.position.set(0, -5, -10)
-      scene.add(sceneObject) //Default Postion is 0,0,0 
+      sceneObject = new THREE.Mesh(geometry, material);
+      hollowObject = new THREE.Mesh(hollowGeometry,hollowMaterial);
+      sceneObject.position.set(0, 0, 5)
+      hollowObject.rotation.x = 4.7
+      hollowObject.position.set(0,0,-10)
+      scene.add(sceneObject); //Default Postion is 0,0,0 
+      scene.add(hollowObject);
       //Adding AR button to the application to start the AR experience       
       const button = ARButton.createButton(renderer);
       document.body.appendChild(button);
@@ -119,8 +128,16 @@
     function onselect() {
       renderer.setAnimationLoop(() => {
         renderer.render(scene, camera);
+        console.log(sceneObject.position.z)
+        if(sceneObject.position.z > -35)
+        {
         sceneObject.position.z = sceneObject.position.z - 0.09;
+        console.log(sceneObject.position.z = sceneObject.position.z - 0.09);
         sceneObject.rotation.z = sceneObject.rotation.z - 0.09;
+        }
+       /*  console.log("hollowRoation" , hollowObject.rotation.x - 0.01)
+        hollowObject.rotation.x = hollowObject.rotation.x - 0.01; */
+        
       })
       console.log("select")
 
